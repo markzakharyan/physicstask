@@ -48,46 +48,48 @@ with open("./output.csv", "w") as output:
 
 # format: 'runNum', 'eventNum', 'm1_pt', 'm1_eta', 'm1_phi', 'm1_m', 'm2_pt', 'm2_eta', 'm2_phi', 'm2_m'
 with open("./muons.txt", "r") as input:
+    with open("./output.txt", "a") as output_txt:
+        with open("./output.csv", "a") as output_csv:
     
-    runNum = None
-    eventNum = None
-    event = None # format of event is [runNum, eventNum, m1, m2]
-    m1 = None # format of m1 and m2 is [pt, eta, phi, m]
-    m2 = None
-    for line in input:
-        # parse event
-        if line.startswith("Run"):
-            runNum = int(line.split("Run ")[1].split(" event")[0])
-            eventNum = int(line.split("event ")[1])
-        if line.startswith("m1"):
-            m1 = [float(i) for i in line.split("pt,eta,phi,m= ")[1].split(" dptinv")[0].split(" ")]
-        if line.startswith("m2"):
-            m2 = [float(i) for i in line.split("pt,eta,phi,m= ")[1].split(" dptinv")[0].split(" ")]
-        
-        if eventNum and m1 and m2:
-            event = [runNum, eventNum]
-            event.extend(m1)
-            event.extend(m2)
-            
-            lorentz_vector_m1 = getLorentzVector_m1(event)
-            lorentz_vector_m2 = getLorentzVector_m2(event)
-            invariant_mass = getInvariantMass(event)
-            
-            with open("./output.txt", "a") as output:
-                output.write(str(invariant_mass) + "\n")
-            
-            event.append("[" + " ".join(str(i) for i in lorentz_vector_m1) + "]")
-            event.append("[" + " ".join(str(i) for i in lorentz_vector_m2) + "]")
-            event.append(invariant_mass)
-            
-            with open("./output.csv", "a") as output_csv:
-                output_csv.write(",".join(str(i) for i in event) + "\n")
-            
-            event = []
             runNum = None
             eventNum = None
-            m1 = None
+            event = None # format of event is [runNum, eventNum, m1, m2]
+            m1 = None # format of m1 and m2 is [pt, eta, phi, m]
             m2 = None
+            for line in input:
+                # parse event
+                if line.startswith("Run"):
+                    runNum = int(line.split("Run ")[1].split(" event")[0])
+                    eventNum = int(line.split("event ")[1])
+                if line.startswith("m1"):
+                    m1 = [float(i) for i in line.split("pt,eta,phi,m= ")[1].split(" dptinv")[0].split(" ")]
+                if line.startswith("m2"):
+                    m2 = [float(i) for i in line.split("pt,eta,phi,m= ")[1].split(" dptinv")[0].split(" ")]
+                
+                if eventNum and m1 and m2:
+                    event = [runNum, eventNum]
+                    event.extend(m1)
+                    event.extend(m2)
+                    
+                    lorentz_vector_m1 = getLorentzVector_m1(event)
+                    lorentz_vector_m2 = getLorentzVector_m2(event)
+                    invariant_mass = getInvariantMass(event)
+                    
+                    
+                    output_txt.write(str(invariant_mass) + "\n")
+                    
+                    event.append("[" + " ".join(str(i) for i in lorentz_vector_m1) + "]")
+                    event.append("[" + " ".join(str(i) for i in lorentz_vector_m2) + "]")
+                    event.append(invariant_mass)
+                    
+                    
+                    output_csv.write(",".join(str(i) for i in event) + "\n")
+                    
+                    event = []
+                    runNum = None
+                    eventNum = None
+                    m1 = None
+                    m2 = None
 
 
 
