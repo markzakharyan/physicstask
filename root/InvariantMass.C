@@ -42,7 +42,7 @@ void InvariantMass() {
     TLorentzVector muon1;
     TLorentzVector muon2;
 
-    TH1F histogram("histogram", "Invariant Mass", 100, 350, 650);
+    TH1F histogram("histogram", "Frequency of Invariant Mass (GeV)", 100, 350, 650);
 
     unique_ptr<TFile> histogram_data( TFile::Open("histogram.root", "RECREATE") );
 
