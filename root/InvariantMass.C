@@ -41,6 +41,11 @@ void InvariantMass() {
     string line;
     TLorentzVector muon1;
     TLorentzVector muon2;
+
+    TH1F histogram("histogram", "Invariant Mass", 100, 350, 650);
+
+    unique_ptr<TFile> histogram_data( TFile::Open("histogram.root", "RECREATE") );
+
     while(getline(is, line))
     {
         //printf("%s\n", line.c_str());
@@ -57,9 +62,19 @@ void InvariantMass() {
             muon2.SetPtEtaPhiM(v[0], v[1], v[2], v[3]);
 
             TLorentzVector sum = muon1 + muon2;
+
+            histogram.Fill(sum.M());
+
             ofstream outputFile;
             outputFile.open("output.txt", ios_base::app);
             outputFile << to_string(sum.M()) << endl;
         }
     }
+
+    histogram_data->WriteObject(&histogram, "histogram");
+    histogram_data->Close();
+
+    TFile *histofile = new TFile("histogram.root");
+    TH1F *histo = (TH1F*) histofile->Get("histogram");
+    histo->Draw();
 }
